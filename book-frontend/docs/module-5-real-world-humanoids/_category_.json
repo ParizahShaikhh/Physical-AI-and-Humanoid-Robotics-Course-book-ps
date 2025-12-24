@@ -1,0 +1,8 @@
+{
+  "label": "Module 5: Deployment, Integration, and Real-World Humanoids",
+  "position": 5,
+  "link": {
+    "type": "generated-index",
+    "description": "Learn about deploying humanoid robots from simulation to real-world environments, including system integration, safety protocols, and performance evaluation."
+  }
+}

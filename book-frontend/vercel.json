@@ -1,0 +1,4 @@
+{
+  "buildCommand": "cd book-frontend && npm install && npm run build",
+  "outputDirectory": "book-frontend/build"
+}
