@@ -1,4 +1,5 @@
 {
-  "buildCommand": "cd book-frontend && npm install && npm run build",
-  "outputDirectory": "book-frontend/build"
+  "framework": "docusaurus",
+  "buildCommand": "npm run build",
+  "outputDirectory": "build"
 }
