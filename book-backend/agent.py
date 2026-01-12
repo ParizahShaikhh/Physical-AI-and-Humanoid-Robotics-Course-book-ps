@@ -67,9 +67,16 @@ class RAGAgent:
         if not api_key:
             raise ValueError("OPENROUTER_API_KEY or OPENAI_API_KEY environment variable not found")
 
+        # Initialize with explicit HTTP client to avoid proxy issues in cloud environments
+        import httpx
+        http_client = httpx.Client(
+            timeout=60.0,  # Increase timeout for cloud environments
+        )
+
         self.client = OpenAI(
             api_key=api_key,
-            base_url="https://openrouter.ai/api/v1"
+            base_url="https://openrouter.ai/api/v1",
+            http_client=http_client
         )
         self.model = model
 
