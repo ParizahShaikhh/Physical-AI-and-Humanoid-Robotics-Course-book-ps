@@ -1,0 +1,5 @@
+title: RAG Agent API for Physical AI and Humanoid Robotics Course
+emoji: 🤖
+color: blue
+sdk: docker
+runtime: huggingface

@@ -55,6 +55,7 @@ const config: Config = {
     ],
   ],
 
+
   themeConfig: {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
@@ -62,9 +63,9 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'ROS 2 Robotics Course',
+      title: 'Physical AI and Humanoid Robotics Course',
       logo: {
-        alt: 'My Site Logo',
+        alt: 'Course Logo',
         src: 'img/logo.svg',
       },
       items: [
@@ -72,25 +73,12 @@ const config: Config = {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: 'Module 1',
+          label: 'Course Modules',
         },
         {
-          type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
+          to: '/chat',
+          label: 'Chat',
           position: 'left',
-          label: 'Module 5',
-        },
-        {
-          type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
-          position: 'left',
-          label: 'Module 6',
-        },
-        {
-          type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
-          position: 'left',
-          label: 'Module 7',
         },
         {
           href: 'https://github.com/facebook/docusaurus',
@@ -108,6 +96,18 @@ const config: Config = {
             {
               label: 'Module 1: ROS 2',
               to: '/docs/module-1-ros2',
+            },
+            {
+              label: 'Module 2: Digital Twin',
+              to: '/docs/module-2-digital-twin',
+            },
+            {
+              label: 'Module 3: AI Robot Brain',
+              to: '/docs/module-3-ai-robot-brain',
+            },
+            {
+              label: 'Module 4: VLA Systems',
+              to: '/docs/module-4-vla-systems',
             },
             {
               label: 'Module 5: Real-World Humanoids',

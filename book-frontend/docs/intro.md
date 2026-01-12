@@ -2,46 +2,36 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# Physical AI and Humanoid Robotics Course
 
-Let's discover **Docusaurus in less than 5 minutes**.
+Welcome to the comprehensive course on **Physical AI and Humanoid Robotics**. This course covers the essential concepts, tools, and techniques needed to understand and develop AI-powered humanoid robots.
+
+## Course Overview
+
+This course is structured into 7 comprehensive modules that take you from fundamental concepts to advanced implementation:
+
+- **Module 1**: The Robotic Nervous System (ROS 2) - Learn how ROS 2 serves as the middleware connecting AI algorithms with physical robotic systems
+- **Module 2**: The Digital Twin (Gazebo & Unity) - Explore simulation environments for robot development and testing
+- **Module 3**: The AI-Robot Brain (NVIDIA Isaac™) - Understand AI frameworks for robotic intelligence
+- **Module 4**: Vision-Language-Action (VLA) Systems - Learn about multimodal AI systems for robotics
+- **Module 5**: Deployment, Integration, and Real-World Humanoids - Bridge the gap between simulation and reality
+- **Module 6**: Advanced Topics, Optimization, and Future Directions - Explore cutting-edge developments
+- **Module 7**: Capstone, Evaluation, and Professional Practice - Apply everything in a comprehensive project
 
 ## Getting Started
 
-Get started by **creating a new site**.
+To begin your journey, navigate to **Module 1** using the navigation menu above or start with the first chapter:
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+- [Start with Module 1: ROS 2](./module-1-ros2/index.md)
 
-### What you'll need
+## Interactive Learning
 
-- [Node.js](https://nodejs.org/en/download/) version 20.0 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
+Use the **Chat** feature in the navigation bar to ask questions about any content you're reading. The AI assistant can help clarify concepts and provide additional context based on the course materials.
 
-## Generate a new site
+## Prerequisites
 
-Generate a new Docusaurus site using the **classic template**.
+- Basic Python programming knowledge
+- Fundamental understanding of AI concepts
+- Interest in robotics and physical AI applications
 
-The classic template will automatically be added to your project after you run the command:
-
-```bash
-npm init docusaurus@latest my-website classic
-```
-
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
-
-The command also installs all necessary dependencies you need to run Docusaurus.
-
-## Start your site
-
-Run the development server:
-
-```bash
-cd my-website
-npm run start
-```
-
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
-
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
-
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+Ready to begin? Start with [Module 1: The Robotic Nervous System (ROS 2)](./module-1-ros2/index.md).
