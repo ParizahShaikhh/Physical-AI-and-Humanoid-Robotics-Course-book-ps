@@ -15,7 +15,7 @@ const config: Config = {
   },
 
   // Set the production url of your site here
-  url: 'https://your-docusaurus-site.example.com', // Your website URL
+  url: 'https://physical-ai-and-humanoid-robotics-c-sooty.vercel.app', // Your website URL
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub Pages deployment, use the repository name
   baseUrl: '/',
