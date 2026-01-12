@@ -30,7 +30,7 @@ const Chatbot: React.FC = () => {
   const [selectedMode, setSelectedMode] = useState<'full-book' | 'selected-text'>('full-book');
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const location = useLocation();
-  const apiService = new ApiService('http://localhost:8000'); // Use your backend URL
+  const apiService = new ApiService(); // Uses REACT_APP_BACKEND_URL from environment or defaults to localhost
 
   // Get current page context (title, pathname, etc.)
   const getCurrentPageContext = () => {

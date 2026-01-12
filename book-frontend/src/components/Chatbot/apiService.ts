@@ -37,12 +37,17 @@ class ApiService {
         context: currentPageContext || '',
       };
 
-      const response = await fetch(`${this.baseUrl}/api/chat`, {
+      // Determine the endpoint based on the mode
+      const endpoint = request.mode === 'selected-text' ? `${this.baseUrl}/api/selected-text` : `${this.baseUrl}/api/chat`;
+
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(enhancedRequest),
+        credentials: 'include', // Include credentials for mobile compatibility
+        mode: 'cors', // Explicitly set CORS mode
       });
 
       if (!response.ok) {
@@ -59,7 +64,10 @@ class ApiService {
 
   async getHealth(): Promise<any> {
     try {
-      const response = await fetch(`${this.baseUrl}/api/health`);
+      const response = await fetch(`${this.baseUrl}/api/health`, {
+        credentials: 'include', // Include credentials for mobile compatibility
+        mode: 'cors' // Explicitly set CORS mode
+      });
       if (!response.ok) {
         throw new Error(`Health check failed: ${response.status}`);
       }
@@ -72,7 +80,10 @@ class ApiService {
 
   async getMetrics(): Promise<any> {
     try {
-      const response = await fetch(`${this.baseUrl}/api/metrics`);
+      const response = await fetch(`${this.baseUrl}/api/metrics`, {
+        credentials: 'include', // Include credentials for mobile compatibility
+        mode: 'cors' // Explicitly set CORS mode
+      });
       if (!response.ok) {
         throw new Error(`Metrics request failed: ${response.status}`);
       }
