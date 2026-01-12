@@ -15,13 +15,9 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# Import OpenAI compatible library for OpenRouter
-try:
-    from openai import OpenAI
-    OPENROUTER_AVAILABLE = True
-except ImportError:
-    OPENROUTER_AVAILABLE = False
-    print("OpenAI library not found. Install with: pip install openai")
+# We're using direct HTTP requests to OpenRouter API instead of OpenAI library
+# to avoid proxy configuration issues in cloud environments
+OPENROUTER_AVAILABLE = True
 
 # Import the retrieval pipeline from the same directory
 try:
@@ -60,17 +56,27 @@ class RAGAgent:
             cache_ttl: Cache time-to-live in seconds
         """
         if not OPENROUTER_AVAILABLE:
-            raise ImportError("OpenAI library is required but not installed")
+            raise ImportError("Required dependencies are not available")
 
         # Initialize OpenRouter client
         api_key = os.getenv("OPENROUTER_API_KEY") or os.getenv("OPENAI_API_KEY")
         if not api_key:
             raise ValueError("OPENROUTER_API_KEY or OPENAI_API_KEY environment variable not found")
 
-        self.client = OpenAI(
-            api_key=api_key,
-            base_url="https://openrouter.ai/api/v1"
+        # Initialize using direct HTTP requests to avoid OpenAI library proxy issues
+        import httpx
+
+        self.api_key = api_key
+        self.base_url = "https://openrouter.ai/api/v1"
+
+        # Create httpx client with minimal configuration to avoid proxy-related issues
+        self.http_client = httpx.Client(
+            timeout=60.0,
+            limits=httpx.Limits(max_keepalive_connections=5, max_connections=10),
+            trust_env=False  # This is key - disables environment-based proxy configuration
         )
+
+        # Define model separately
         self.model = model
 
         # Initialize the retrieval pipeline
@@ -236,16 +242,33 @@ class RAGAgent:
         """
 
         try:
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=[
+            # Use direct HTTP request to OpenRouter API
+            import json
+
+            payload = {
+                "model": self.model,
+                "messages": [
                     {"role": "system", "content": system_message},
                     {"role": "user", "content": user_message}
                 ],
-                temperature=0.1  # Lower temperature for more consistent, fact-based responses
+                "temperature": 0.1  # Lower temperature for more consistent, fact-based responses
+            }
+
+            response = self.http_client.post(
+                f"{self.base_url}/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {self.api_key}",
+                    "Content-Type": "application/json"
+                },
+                json=payload
             )
 
-            generated_response = response.choices[0].message.content
+            if response.status_code != 200:
+                self.logger.error(f"OpenRouter API error: {response.status_code} - {response.text}")
+                raise Exception(f"OpenRouter API error: {response.status_code}")
+
+            response_data = response.json()
+            generated_response = response_data['choices'][0]['message']['content']
             self.logger.info("Response generated successfully")
 
             # Add source attribution and confidence to the response
