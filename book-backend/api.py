@@ -7,6 +7,7 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from fastapi import Request
+import re
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -114,6 +115,24 @@ class PerformanceMetrics:
 
 metrics = PerformanceMetrics()
 
+def is_mobile_request(user_agent: str) -> bool:
+    """
+    Check if the request is from a mobile device based on user agent.
+    """
+    if not user_agent:
+        return False
+
+    mobile_patterns = [
+        r'Mobile', r'Android', r'iOS', r'iPhone', r'iPad', r'Windows Phone',
+        r'BlackBerry', r'Opera Mini', r'IEMobile', r'Mobile Safari'
+    ]
+
+    user_agent_lower = user_agent.lower()
+    for pattern in mobile_patterns:
+        if re.search(pattern, user_agent_lower, re.IGNORECASE):
+            return True
+    return False
+
 # Initialize rate limiter
 limiter = Limiter(key_func=get_remote_address)
 app = FastAPI(title="RAG Agent API", version="1.0.0")
@@ -134,10 +153,18 @@ app.add_middleware(
         "http://localhost:3004",  # Alternative local port
         "http://localhost:3005",  # Alternative local port
         "http://localhost:3006",  # Alternative local port
+        # Additional origins for mobile compatibility
+        "file://",  # For mobile WebView apps
+        "capacitor://",  # For Capacitor apps
+        "ionic://",  # For Ionic apps
+        "twa://",  # For Trusted Web Activities
+        "https://*.vercel.app",  # Allow any Vercel subdomain for potential mobile access
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    # Additional headers for mobile compatibility
+    expose_headers=["Access-Control-Allow-Origin", "X-Response-Time", "X-Processing-Time"]
 )
 
 # Initialize the RAG agent
@@ -165,7 +192,7 @@ def format_rag_response(rag_result: str, start_time: float) -> QueryResponse:
 
     return QueryResponse(
         answer=answer,
-        sources=[],  # Would be populated with actual sources
+        sources=sources,  # Would be populated with actual sources
         confidence_level=confidence_level,
         confidence_score=confidence_score,
         query_id=str(uuid.uuid4()),
@@ -185,7 +212,12 @@ def validate_query_request(query: str) -> bool:
 
 @app.get("/")
 def read_root():
-    return {"message": "RAG Agent API is running"}
+    from fastapi.responses import JSONResponse
+    response = JSONResponse(content={"message": "RAG Agent API is running"})
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
 
 @app.post("/api/chat")
 @limiter.limit("10/minute")  # Limit to 10 requests per minute per IP
@@ -241,7 +273,13 @@ async def chat_endpoint(request: Request):
         # Format the response using our utility function
         formatted_response = format_rag_response(response_text, start_time)
 
-        return formatted_response
+        # Add cache control headers for mobile compatibility
+        from fastapi.responses import JSONResponse
+        response = JSONResponse(content=formatted_response.dict() if hasattr(formatted_response, 'dict') else formatted_response)
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+        return response
     except Exception as e:
         processing_time = (time.time() - start_time) * 1000
         error_msg = f"Error processing query - Query ID: {query_id}, Processing time: {processing_time:.2f}ms, Error: {str(e)}"
@@ -302,7 +340,13 @@ async def selected_text_endpoint(request: Request):
         # Format the response using our utility function
         formatted_response = format_rag_response(response_text, start_time)
 
-        return formatted_response
+        # Add cache control headers for mobile compatibility
+        from fastapi.responses import JSONResponse
+        response = JSONResponse(content=formatted_response.dict() if hasattr(formatted_response, 'dict') else formatted_response)
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+        return response
     except Exception as e:
         processing_time = (time.time() - start_time) * 1000
         error_msg = f"Error processing selected-text query - Query ID: {query_id}, Processing time: {processing_time:.2f}ms, Error: {str(e)}"
@@ -349,7 +393,9 @@ async def health_check(request: Request):
         # Record response time for metrics
         metrics.record_response_time("/api/health", response_time)
 
-        return {
+        # Add cache control headers for mobile compatibility
+        from fastapi.responses import JSONResponse
+        response_content = {
             "status": "healthy",
             "timestamp": datetime.now().isoformat(),
             "version": "1.0.0",
@@ -359,6 +405,11 @@ async def health_check(request: Request):
                 "database_connection": "not_implemented_yet"  # Placeholder for future DB health check
             }
         }
+        response = JSONResponse(content=response_content)
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+        return response
     except Exception as e:
         response_time = (time.time() - start_time) * 1000
         error_msg = f"Health check failed - Response time: {response_time:.2f}ms, Error: {str(e)}"
@@ -381,7 +432,9 @@ async def get_metrics(request: Request):
     # Get all metrics
     all_metrics = metrics.get_metrics()
 
-    return {
+    # Add cache control headers for mobile compatibility
+    from fastapi.responses import JSONResponse
+    response_content = {
         "timestamp": datetime.now().isoformat(),
         "version": "1.0.0",
         "metrics": all_metrics,
@@ -391,6 +444,11 @@ async def get_metrics(request: Request):
             "overall_error_rate": sum([v["errors"] for v in all_metrics.values()]) / sum([v["requests"] for v in all_metrics.values()]) if sum([v["requests"] for v in all_metrics.values()]) > 0 else 0
         }
     }
+    response = JSONResponse(content=response_content)
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
 
 if __name__ == "__main__":
     import uvicorn
