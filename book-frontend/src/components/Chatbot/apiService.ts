@@ -25,8 +25,18 @@ interface QueryResponse {
 class ApiService {
   private baseUrl: string;
 
-  constructor(baseUrl: string = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000') {
-    this.baseUrl = baseUrl;
+  constructor(baseUrl?: string) {
+    // Handle the case where process.env is not available in browser
+    if (typeof process !== 'undefined' && process.env?.REACT_APP_BACKEND_URL) {
+      this.baseUrl = process.env.REACT_APP_BACKEND_URL;
+    } else if (baseUrl) {
+      this.baseUrl = baseUrl;
+    } else {
+      // Fallback to a default value
+      this.baseUrl = typeof window !== 'undefined'
+        ? window.location.origin.replace(/\/$/, '') // Use current origin if available
+        : 'http://localhost:8000'; // Default fallback
+    }
   }
 
   async sendQuery(request: QueryRequest, currentPageContext?: string): Promise<QueryResponse> {
