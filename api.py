@@ -394,4 +394,5 @@ async def get_metrics(request: Request):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000)/ /   B u i l d   t r i g g e r   0 1 / 1 3 / 2 0 2 6   1 5 : 5 9 : 2 3  
+ 
