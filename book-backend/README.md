@@ -1,50 +1,51 @@
-# Book Content Ingestion and Retrieval Pipeline
+---
+title: Book Assistant
+emoji: 📚
+colorFrom: blue
+colorTo: yellow
+sdk: docker
+pinned: false
+license: apache-2.0
+short_description: RAG Chatbot for Physical AI and Humanoid Robotics Course
+---
 
-This project implements a complete pipeline for processing book content from a Docusaurus website, including both ingestion and retrieval components.
+# Book Assistant
+Ask questions about the book content and get answers grounded in the text.
 
-- **Ingestion**: Crawls a Docusaurus book website, extracts content, generates embeddings using Cohere, and stores them in Qdrant Cloud
-- **Retrieval**: Provides semantic search capabilities over the stored embeddings using natural language queries
+## Setup Instructions
 
-## Setup
+This RAG (Retrieval-Augmented Generation) chatbot requires several API keys to function properly:
 
-1. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+### Required Environment Variables (as Secrets in Space Settings):
 
-2. Create a `.env` file with your API keys:
-   ```env
-   COHERE_API_KEY=your_cohere_api_key_here
-   QDRANT_API_KEY=your_qdrant_api_key_here
-   QDRANT_URL=your_qdrant_cluster_url
-   TARGET_WEBSITE_URL=https://your-docusaurus-site.example.com
-   ```
+1. `OPENROUTER_API_KEY` - API key for OpenRouter (for LLM responses)
+2. `COHERE_API_KEY` - API key for Cohere (for text embeddings)
+3. `QDRANT_URL` - URL for your Qdrant vector database
+4. `QDRANT_API_KEY` - API key for your Qdrant database
 
-## Usage
+### Before Using the Chatbot:
 
-### Ingestion Pipeline
-Run the ingestion pipeline to crawl, embed, and store book content:
+The book content needs to be ingested into the Qdrant vector database. If you have access to the Space's terminal, run:
+
 ```bash
-python main.py
+python ingest_books.py
 ```
 
-### Retrieval Pipeline
-Use the retrieval pipeline to perform semantic searches:
-```bash
-python retrieve.py
-```
+This will:
+- Create the 'book_embeddings' collection in Qdrant
+- Chunk the book content into searchable pieces
+- Generate embeddings using Cohere
+- Store the embeddings in Qdrant with metadata
 
-Or integrate the SemanticRetriever class in your own code:
-```python
-from retrieve import SemanticRetriever
+### Features:
+- Full-book query mode: Search across the entire book content
+- Context-aware responses grounded in the source material
+- Source attribution for all responses
+- Mobile-friendly interface
 
-retriever = SemanticRetriever()
-results = retriever.search("your natural language query", top_k=5)
-```
-
-## Components
-
-- `main.py`: The ingestion pipeline that crawls, extracts, chunks, embeds, and stores content
-- `retrieve.py`: The retrieval pipeline that performs semantic search and filtering
-- `test_ingestion.py`: Tests for the ingestion pipeline
-- `test_retrieval.py`: Tests for the retrieval pipeline
+### Technology Stack:
+- FastAPI backend
+- Cohere for embeddings
+- Qdrant for vector storage
+- OpenRouter for LLM responses
+- Semantic search capabilities
